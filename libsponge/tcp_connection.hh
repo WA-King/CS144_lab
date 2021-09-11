@@ -12,7 +12,8 @@ class TCPConnection {
     TCPConfig _cfg;
     TCPReceiver _receiver{_cfg.recv_capacity};
     TCPSender _sender{_cfg.send_capacity, _cfg.rt_timeout, _cfg.fixed_isn};
-
+    size_t since_last_segment;
+    bool live;
     //! outbound queue of segments that the TCPConnection wants sent
     std::queue<TCPSegment> _segments_out{};
 
@@ -65,6 +66,11 @@ class TCPConnection {
     //! Called when a new segment has been received from the network
     void segment_received(const TCPSegment &seg);
 
+    void send_rst();
+
+    void send_segment();
+
+    void check_done();
     //! Called periodically when time elapses
     void tick(const size_t ms_since_last_tick);
 
@@ -81,7 +87,7 @@ class TCPConnection {
     //!@}
 
     //! Construct a new connection from a configuration
-    explicit TCPConnection(const TCPConfig &cfg) : _cfg{cfg} {}
+    explicit TCPConnection(const TCPConfig &cfg) : _cfg{cfg}, since_last_segment(0), live(true) {}
 
     //! \name construction and destruction
     //! moving is allowed; copying is disallowed; default construction not possible

@@ -3,6 +3,7 @@
 
 #include "network_interface.hh"
 
+#include <map>
 #include <optional>
 #include <queue>
 
@@ -49,6 +50,8 @@ class Router {
     //! datagram's destination address.
     void route_one_datagram(InternetDatagram &dgram);
 
+    std::map<std::pair<uint32_t, uint8_t>, std::pair<std::optional<Address>, size_t>> route_map{};
+
   public:
     //! Add an interface to the router
     //! \param[in] interface an already-constructed network interface
@@ -69,6 +72,7 @@ class Router {
 
     //! Route packets between the interfaces
     void route();
+    uint32_t prefix(uint32_t address, uint8_t len);
 };
 
 #endif  // SPONGE_LIBSPONGE_ROUTER_HH

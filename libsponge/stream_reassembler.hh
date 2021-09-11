@@ -14,6 +14,10 @@ class StreamReassembler {
 
     ByteStream _output;  //!< The reassembled in-order byte stream
     size_t _capacity;    //!< The maximum number of bytes
+    std::vector<char> input;
+    std::vector<bool> vis;
+    size_t s, id, inputLen;
+    bool finishInput;
 
   public:
     //! \brief Construct a `StreamReassembler` that will store up to `capacity` bytes.

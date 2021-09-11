@@ -22,15 +22,18 @@ class TCPSender {
 
     //! outbound queue of segments that the TCPSender wants sent
     std::queue<TCPSegment> _segments_out{};
-
+    std::queue<TCPSegment> outstanding{};
     //! retransmission timer for the connection
     unsigned int _initial_retransmission_timeout;
-
+    //! the range can be send
+    unsigned int l, win_size, crm;
+    size_t timer, rto;
+    bool timer_start, end;
     //! outgoing stream of bytes that have not yet been sent
     ByteStream _stream;
 
     //! the (absolute) sequence number for the next byte to be sent
-    uint64_t _next_seqno{0};
+    uint64_t _next_seqno{0}, pre_ack, byte_fight;
 
   public:
     //! Initialize a TCPSender
@@ -87,6 +90,9 @@ class TCPSender {
     //! \brief relative seqno for the next byte to be sent
     WrappingInt32 next_seqno() const { return wrap(_next_seqno, _isn); }
     //!@}
+    void send_segment(TCPSegment ans);
+
+    bool isend();
 };
 
 #endif  // SPONGE_LIBSPONGE_TCP_SENDER_HH
